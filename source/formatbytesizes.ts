@@ -60,6 +60,7 @@ function isType(context: Context, format: GLenum): boolean {
 function byteSizes(context: Context): Map<GLenum, GLsizei> {
 
     if (byteSizesByFormatAndContext.has(context)) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return byteSizesByFormatAndContext.get(context)!;
     }
 

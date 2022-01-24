@@ -57,7 +57,7 @@ export class Context {
     };
 
     /** @see {@link backend} */
-    protected _backend: Context.BackendType | undefined;
+    protected _backend: BackendType | undefined;
 
     /**
      * Created context. The actual type depends on the created context.
@@ -117,36 +117,36 @@ export class Context {
         let request = mask ? (mask.backend as string) :
             dataset.backend ? (dataset.backend as string).toLowerCase() : 'auto';
 
-        if (!(request in Context.BackendRequestType)) {
+        if (!(request in BackendRequestType)) {
             log(LogLevel.Warning,
-                `unknown backend '${dataset.backend}' changed to '${Context.BackendRequestType.auto}'`);
+                `unknown backend '${dataset.backend}' changed to '${BackendRequestType.auto}'`);
             request = 'auto';
         }
 
         switch (request) {
-            case Context.BackendRequestType.webgl:
+            case BackendRequestType.webgl:
                 break;
-            case Context.BackendRequestType.experimental:
-            case Context.BackendRequestType.webgl1:
-            case Context.BackendRequestType.experimental1:
-                request = Context.BackendRequestType.webgl;
+            case BackendRequestType.experimental:
+            case BackendRequestType.webgl1:
+            case BackendRequestType.experimental1:
+                request = BackendRequestType.webgl;
                 break;
-            case Context.BackendRequestType.webgl2:
-            case Context.BackendRequestType.experimental2:
-                request = Context.BackendRequestType.webgl2;
+            case BackendRequestType.webgl2:
+            case BackendRequestType.experimental2:
+                request = BackendRequestType.webgl2;
                 break;
             default:
-                request = Context.BackendRequestType.auto;
+                request = BackendRequestType.auto;
         }
 
         let context;
-        if (request !== Context.BackendRequestType.webgl) {
+        if (request !== BackendRequestType.webgl) {
             context = this.requestWebGL2(element, attributes);
         }
         if (!context) {
             context = this.requestWebGL1(element, attributes);
-            logIf(context !== undefined && request === Context.BackendRequestType.webgl2, LogLevel.Info,
-                `backend changed to '${Context.BackendRequestType.webgl}', given '${request}'`);
+            logIf(context !== undefined && request === BackendRequestType.webgl2, LogLevel.Info,
+                `backend changed to '${BackendRequestType.webgl}', given '${request}'`);
         }
 
         assert(!!context, `creating a context failed`);
@@ -162,11 +162,11 @@ export class Context {
     protected static requestWebGL1(element: HTMLCanvasElement,
         attributes: WebGLContextAttributes = Context.DEFAULT_ATTRIBUTES): WebGLRenderingContext | undefined {
 
-        let context = element.getContext(Context.BackendRequestType.webgl, attributes);
+        let context = element.getContext(BackendRequestType.webgl, attributes);
         if (context) {
             return context;
         }
-        context = element.getContext(Context.BackendRequestType.experimental, attributes) as WebGLRenderingContext;
+        context = element.getContext(BackendRequestType.experimental, attributes) as WebGLRenderingContext;
         return context === null ? undefined : context;
     }
 
@@ -180,11 +180,11 @@ export class Context {
         attributes: WebGLContextAttributes = Context.DEFAULT_ATTRIBUTES)
         : WebGL2RenderingContext | undefined {
 
-        let context = element.getContext(Context.BackendRequestType.webgl2, attributes);
+        let context = element.getContext(BackendRequestType.webgl2, attributes);
         if (context) {
             return context;
         }
-        context = element.getContext(Context.BackendRequestType.experimental2, attributes) as WebGL2RenderingContext;
+        context = element.getContext(BackendRequestType.experimental2, attributes) as WebGL2RenderingContext;
         return context === null ? undefined : context;
     }
 
@@ -197,6 +197,7 @@ export class Context {
     protected _attributes: WebGLContextAttributes | undefined = undefined;
 
     protected queryAttributes(): void {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const attributes = this._context!.getContextAttributes();
 
         // Some browsers, e.g., Brave, might disable querying the attributes.
@@ -214,6 +215,7 @@ export class Context {
      * alpha operations and compositing with the page. If the value is false, no alpha buffer is available.
      */
     get alpha(): boolean {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this._attributes ? this._attributes!.alpha as boolean : false;
     }
 
@@ -224,6 +226,7 @@ export class Context {
      * does not support antialiasing, no antialiasing is performed.
      */
     get antialias(): boolean {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this._attributes ? this._attributes!.antialias as boolean : false;
     }
 
@@ -233,6 +236,7 @@ export class Context {
      * buffer is available.
      */
     get depth(): boolean {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this._attributes ? this._attributes!.depth as boolean : false;
     }
 
@@ -243,6 +247,7 @@ export class Context {
      * calls...
      */
     get failIfMajorPerformanceCaveat(): boolean {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this._attributes ? this._attributes!.failIfMajorPerformanceCaveat as boolean : false;
     }
 
@@ -254,6 +259,7 @@ export class Context {
      * the premultipliedAlpha flag.
      */
     get premultipliedAlpha(): boolean {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this._attributes ? this._attributes!.premultipliedAlpha as boolean : false;
     }
 
@@ -265,6 +271,7 @@ export class Context {
      * or overwritten by the author.
      */
     get preserveDrawingBuffer(): boolean {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this._attributes ? this._attributes!.preserveDrawingBuffer as boolean : false;
     }
 
@@ -274,6 +281,7 @@ export class Context {
      * stencil buffer is available.
      */
     get stencil(): boolean {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this._attributes ? this._attributes!.stencil as boolean : false;
     }
 
@@ -301,11 +309,11 @@ export class Context {
         }
 
         switch (this._backend) {
-            case Context.BackendType.WebGL1:
+            case BackendType.WebGL1:
                 assert(WEBGL1_EXTENSIONS.indexOf(extension) > -1, `extension ${extension} not available to WebGL1`);
                 break;
 
-            case Context.BackendType.WebGL2:
+            case BackendType.WebGL2:
                 assert(WEBGL2_DEFAULT_EXTENSIONS.indexOf(extension) === -1,
                     `extension ${extension} supported by default in WebGL2`);
                 assert(WEBGL2_EXTENSIONS.indexOf(extension) > -1, `extension ${extension} not available to WebGL2`);
@@ -348,6 +356,7 @@ export class Context {
      * This function should get called only once per Context instance.
      */
     protected queryExtensionSupport(): void {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const extensions = this._context!.getSupportedExtensions();
 
         // Some browsers, e.g., Brave, might disable querying the supported extensions.
@@ -365,7 +374,7 @@ export class Context {
             this._extensions.push(extension);
         }
 
-        if (this._backend === Context.BackendType.WebGL1) {
+        if (this._backend === BackendType.WebGL1) {
             this.ANGLE_instanced_arrays_supported = this.supports('ANGLE_instanced_arrays');
 
             this.EXT_blend_minmax_supported = this.supports('EXT_blend_minmax');
@@ -386,7 +395,7 @@ export class Context {
             this.WEBGL_draw_buffers_supported = this.supports('WEBGL_draw_buffers');
         }
 
-        if (this._backend === Context.BackendType.WebGL2) {
+        if (this._backend === BackendType.WebGL2) {
             this.EXT_color_buffer_float_supported = this.supports('EXT_color_buffer_float');
             this.EXT_disjoint_timer_query_webgl2_supported = this.supports('EXT_disjoint_timer_query_webgl2');
         }
@@ -417,9 +426,11 @@ export class Context {
      * @param extension - Extension identifier to query.
      * @returns - Extension object.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected extension(out: any, extension: string): any {
         if (out === undefined) {
             assert(this.supports(extension), `extension ${extension} expected to be supported`);
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             out = this._context!.getExtension(extension);
         }
         return out;
@@ -430,6 +441,7 @@ export class Context {
      * constructor is protected to enforce context creation using `request`. It queries extension support and
      * configures context specifics for convenience, e.g., HALF_FLOAT format.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected constructor(context: any, mask: ContextMasquerade | undefined) {
         this._context = context;
         this._mask = mask;
@@ -442,10 +454,10 @@ export class Context {
                 /CaptureContext/.test(contextString);
             const webgl2 = /WebGL2RenderingContext/.test(contextString);
 
-            this._backend = webgl1 ? Context.BackendType.WebGL1 : webgl2 ? Context.BackendType.WebGL2 : undefined;
+            this._backend = webgl1 ? BackendType.WebGL1 : webgl2 ? BackendType.WebGL2 : undefined;
         }
 
-        assert(this._backend !== undefined && this._backend.valueOf() !== Context.BackendType.Invalid.valueOf(),
+        assert(this._backend !== undefined && this._backend.valueOf() !== BackendType.Invalid.valueOf(),
             `context is neither webgl nor webgl2, given ${contextString}`);
 
         this.queryAttributes();
@@ -454,6 +466,7 @@ export class Context {
         // undefine all masked functions
         if (this._mask && this._mask.functionsUndefine) {
             for (const func in this._mask.functionsUndefine) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (this._context as any)[func] = undefined;
             }
         }
@@ -479,7 +492,7 @@ export class Context {
      * created successfully. If no context could be created undefined is returned.
      * @returns - Backend that was created on construction.
      */
-    get backend(): Context.BackendType | undefined {
+    get backend(): BackendType | undefined {
         return this._backend;
     }
 
@@ -488,9 +501,9 @@ export class Context {
      */
     get backendString(): string | undefined {
         switch (this._backend) {
-            case Context.BackendType.WebGL1:
+            case BackendType.WebGL1:
                 return 'WebGL';
-            case Context.BackendType.WebGL2:
+            case BackendType.WebGL2:
                 return 'WebGL2';
             default:
                 return undefined;
@@ -514,6 +527,7 @@ export class Context {
     /**
      * Access to either the WebGLRenderingContext or WebGL2RenderingContext.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get gl(): any { // WebGLRenderingContext | WebGL2RenderingContext
         return this._context;
     }
@@ -529,200 +543,235 @@ export class Context {
      * True if the context is a WebGL1 context, otherwise false.
      */
     get isWebGL1(): boolean {
-        return this._backend === Context.BackendType.WebGL1;
+        return this._backend === BackendType.WebGL1;
     }
 
     /**
      * True if the context is a WebGL2 context, otherwise false.
      */
     get isWebGL2(): boolean {
-        return this._backend === Context.BackendType.WebGL2;
+        return this._backend === BackendType.WebGL2;
     }
 
 
     // EXTENSION QUERIES
 
     // WebGL1, WebGL2-default
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected ANGLE_instanced_arrays: any;
     protected ANGLE_instanced_arrays_supported: boolean;
     get supportsInstancedArrays(): boolean {
         return this.ANGLE_instanced_arrays_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get instancedArrays(): any {
         return this.extension(this.ANGLE_instanced_arrays, 'ANGLE_instanced_arrays');
     }
 
     // WebGL1, WebGL2-default
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected EXT_blend_minmax: any;
     protected EXT_blend_minmax_supported: boolean;
     get supportsBlendMinmax(): boolean {
         return this.EXT_blend_minmax_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get blendMinmax(): any {
         return this.extension(this.EXT_blend_minmax, 'EXT_blend_minmax');
     }
 
     // WebGL1
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected EXT_color_buffer_half_float: any;
     protected EXT_color_buffer_half_float_supported: boolean;
     get supportsColorBufferHalfFloat(): boolean {
         return this.EXT_color_buffer_half_float_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get colorBufferHalfFloat(): any {
         return this.extension(this.EXT_color_buffer_half_float, 'EXT_color_buffer_half_float');
     }
 
     // WebGL1
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected EXT_disjoint_timer_query: any;
     protected EXT_disjoint_timer_query_supported: boolean;
     get supportsDisjointTimerQuery(): boolean {
         return this.EXT_disjoint_timer_query_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get disjointTimerQuery(): any {
         return this.extension(this.EXT_disjoint_timer_query, 'EXT_disjoint_timer_query');
     }
 
     // WebGL2
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected EXT_disjoint_timer_query_webgl2: any;
     protected EXT_disjoint_timer_query_webgl2_supported: boolean;
     get supportsDisjointTimerQueryWebGL2(): boolean {
         return this.EXT_disjoint_timer_query_webgl2_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get disjointTimerQueryWebGL2(): any {
         return this.extension(this.EXT_disjoint_timer_query_webgl2, 'EXT_disjoint_timer_query_webgl2');
     }
 
     // WebGL1, WebGL2-default
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected EXT_frag_depth: any;
     protected EXT_frag_depth_supported: boolean;
     get supportsFragDepth(): boolean {
         return this.EXT_frag_depth_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get fragDepth(): any {
         return this.extension(this.EXT_frag_depth, 'EXT_frag_depth');
     }
 
     // WebGL1, WebGL2-default
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected EXT_sRGB: any;
     protected EXT_sRGB_supported: boolean;
     get supportsSRGB(): boolean {
         return this.EXT_sRGB_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get sRGB(): any {
         return this.extension(this.EXT_sRGB, 'EXT_sRGB');
     }
 
     // WebGL1, WebGL2-default
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected EXT_shader_texture_lod: any;
     protected EXT_shader_texture_lod_supported: boolean;
     get supportsShaderTextureLOD(): boolean {
         return this.EXT_shader_texture_lod_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get shaderTextureLOD(): any {
         return this.extension(this.EXT_shader_texture_lod, 'EXT_shader_texture_lod');
     }
 
     // WebGL1, WebGL2
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected EXT_texture_filter_anisotropic: any;
     protected EXT_texture_filter_anisotropic_supported: boolean;
     get supportsTextureFilterAnisotropic(): boolean {
         return this.EXT_texture_filter_anisotropic_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get textureFilterAnisotropic(): any {
         return this.extension(this.EXT_texture_filter_anisotropic, 'EXT_texture_filter_anisotropic');
     }
 
     // WebGL1, WebGL2-default
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected OES_element_index_uint: any;
     protected OES_element_index_uint_supported: boolean;
     get supportsElementIndexUint(): boolean {
         return this.OES_element_index_uint_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get elementIndexUint(): any {
         return this.extension(this.OES_element_index_uint, 'OES_element_index_uint');
     }
 
     // WebGL1, WebGL2-default
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected OES_standard_derivatives: any;
     protected OES_standard_derivatives_supported: boolean;
     get supportsStandardDerivatives(): boolean {
         return this.OES_standard_derivatives_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get standardDerivatives(): any {
         return this.extension(this.OES_standard_derivatives, 'OES_standard_derivatives');
     }
 
     // WebGL1, WebGL2-default
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected OES_texture_float: any;
     protected OES_texture_float_supported: boolean;
     get supportsTextureFloat(): boolean {
         return this.OES_texture_float_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get textureFloat(): any {
         return this.extension(this.OES_texture_float, 'OES_texture_float');
     }
 
     // WebGL1, WebGL2
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected OES_texture_float_linear: any;
     protected OES_texture_float_linear_supported: boolean;
     get supportsTextureFloatLinear(): boolean {
         return this.OES_texture_float_linear_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get textureFloatLinear(): any {
         return this.extension(this.OES_texture_float_linear, 'OES_texture_float_linear');
     }
 
     // WebGL1, WebGL2-default
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected OES_texture_half_float: any;
     protected OES_texture_half_float_supported: boolean;
     get supportsTextureHalfFloat(): boolean {
         return this.OES_texture_half_float_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get textureHalfFloat(): any {
         return this.extension(this.OES_texture_half_float, 'OES_texture_half_float');
     }
 
     // WebGL1, WebGL2
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected OES_texture_half_float_linear: any;
     protected OES_texture_half_float_linear_supported: boolean;
     get supportsTextureHalfFloatLinear(): boolean {
         return this.OES_texture_half_float_linear_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get textureHalfFloatLinear(): any {
         return this.extension(this.OES_texture_half_float_linear, 'OES_texture_half_float_linear');
     }
 
     // WebGL1, WebGL2-default
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected OES_vertex_array_object: any;
     protected OES_vertex_array_object_supported: boolean;
     get supportsVertexArrayObject(): boolean {
         return this.OES_vertex_array_object_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get vertexArrayObject(): any {
         return this.extension(this.OES_vertex_array_object, 'OES_vertex_array_object');
     }
 
     // WebGL1
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected WEBGL_color_buffer_float: any;
     protected WEBGL_color_buffer_float_supported: boolean;
     // WebGL2
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected EXT_color_buffer_float: any;
     protected EXT_color_buffer_float_supported: boolean;
     get supportsColorBufferFloat(): boolean | undefined {
         switch (this._backend) {
-            case Context.BackendType.WebGL1:
+            case BackendType.WebGL1:
                 return this.WEBGL_color_buffer_float_supported;
-            case Context.BackendType.WebGL2:
+            case BackendType.WebGL2:
                 return this.EXT_color_buffer_float_supported;
             default:
                 return undefined;
         }
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get colorBufferFloat(): any | undefined {
         switch (this._backend) {
-            case Context.BackendType.WebGL1:
+            case BackendType.WebGL1:
                 return this.extension(this.WEBGL_color_buffer_float, 'WEBGL_color_buffer_float');
-            case Context.BackendType.WebGL2:
+            case BackendType.WebGL2:
                 return this.extension(this.EXT_color_buffer_float, 'EXT_color_buffer_float');
             default:
                 return undefined;
@@ -730,121 +779,145 @@ export class Context {
     }
 
     // WebGL1, WebGL2
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected WEBGL_compressed_texture_astc: any;
     protected WEBGL_compressed_texture_astc_supported: boolean;
     get supportsCompressedTextureASTC(): boolean {
         return this.WEBGL_compressed_texture_astc_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get compressedTextureASTC(): any {
         return this.extension(this.WEBGL_compressed_texture_astc, 'WEBGL_compressed_texture_astc');
     }
 
     // WebGL1, WebGL2
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected WEBGL_compressed_texture_atc: any;
     protected WEBGL_compressed_texture_atc_supported: boolean;
     get supportsCompressedTextureATC(): boolean {
         return this.WEBGL_compressed_texture_atc_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get compressedTextureATC(): any {
         return this.extension(this.WEBGL_compressed_texture_atc, 'WEBGL_compressed_texture_atc');
     }
 
     // WebGL1, WebGL2
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected WEBGL_compressed_texture_etc: any;
     protected WEBGL_compressed_texture_etc_supported: boolean;
     get supportsCompressedTextureETC(): boolean {
         return this.WEBGL_compressed_texture_etc_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get compressedTextureETC(): any {
         return this.extension(this.WEBGL_compressed_texture_etc, 'WEBGL_compressed_texture_etc');
     }
 
     // WebGL1, WebGL2
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected WEBGL_compressed_texture_etc1: any;
     protected WEBGL_compressed_texture_etc1_supported: boolean;
     get supportsCompressedTextureETC1(): boolean {
         return this.WEBGL_compressed_texture_etc1_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get compressedTextureETC1(): any {
         return this.extension(this.WEBGL_compressed_texture_etc1, 'WEBGL_compressed_texture_etc1');
     }
 
     // WebGL1, WebGL2
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected WEBGL_compressed_texture_pvrtc: any;
     protected WEBGL_compressed_texture_pvrtc_supported: boolean;
     get supportsCompressedTexturePVRTC(): boolean {
         return this.WEBGL_compressed_texture_pvrtc_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get compressedTexturePVRTC(): any {
         return this.extension(this.WEBGL_compressed_texture_pvrtc, 'WEBGL_compressed_texture_pvrtc');
     }
 
     // WebGL1, WebGL2
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected WEBGL_compressed_texture_s3tc: any;
     protected WEBGL_compressed_texture_s3tc_supported: boolean;
     get supportsCompressedTextureS3TC(): boolean {
         return this.WEBGL_compressed_texture_s3tc_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get compressedTextureS3TC(): any {
         return this.extension(this.WEBGL_compressed_texture_s3tc, 'WEBGL_compressed_texture_s3tc');
     }
 
     // WebGL1, WebGL2
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected WEBGL_compressed_texture_s3tc_srgb: any;
     protected WEBGL_compressed_texture_s3tc_srgb_supported: boolean;
     get supportsCompressedTextureS3TCSRGB(): boolean {
         return this.WEBGL_compressed_texture_s3tc_srgb_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get compressedTextureS3TCSRGB(): any {
         return this.extension(this.WEBGL_compressed_texture_s3tc_srgb, 'WEBGL_compressed_texture_s3tc_srgb');
     }
 
     // WebGL1, WebGL2
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected WEBGL_debug_renderer_info: any;
     protected WEBGL_debug_renderer_info_supported: boolean;
     get supportsDebugRendererInfo(): boolean {
         return this.WEBGL_debug_renderer_info_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get debugRendererInfo(): any {
         return this.extension(this.WEBGL_debug_renderer_info, 'WEBGL_debug_renderer_info');
     }
 
     // WebGL1, WebGL2
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected WEBGL_debug_shaders: any;
     protected WEBGL_debug_shaders_supported: boolean;
     get supportsDebugShaders(): boolean {
         return this.WEBGL_debug_shaders_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get debugShaders(): any {
         return this.extension(this.WEBGL_debug_shaders, 'WEBGL_debug_shaders');
     }
 
     // WebGL1, WebGL2-default
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected WEBGL_depth_texture: any;
     protected WEBGL_depth_texture_supported: boolean;
     get supportsDepthTexture(): boolean {
         return this.WEBGL_depth_texture_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get depthTexture(): any {
         return this.extension(this.WEBGL_depth_texture, 'WEBGL_depth_texture');
     }
 
     // WebGL1, WebGL2-default
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected WEBGL_draw_buffers: any;
     protected WEBGL_draw_buffers_supported: boolean;
     get supportsDrawBuffers(): boolean {
         return this.WEBGL_draw_buffers_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get drawBuffers(): any {
         return this.extension(this.WEBGL_draw_buffers, 'WEBGL_draw_buffers');
     }
 
     // WebGL1, WebGL2
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected WEBGL_lose_context: any;
     protected WEBGL_lose_context_supported: boolean;
     get supportsLoseContext(): boolean {
         return this.WEBGL_lose_context_supported;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     get loseContext(): any {
         return this.extension(this.WEBGL_lose_context, 'WEBGL_lose_context');
     }
@@ -855,6 +928,7 @@ export class Context {
      * True if WebGL2 blitFramebuffer is supported, false otherwise. This is experimental technology.
      */
     get supportsBlitFramebuffer(): boolean {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return (this._context as any).blitFramebuffer !== undefined;
     }
 
@@ -862,6 +936,7 @@ export class Context {
      * True if WebGL2 readBuffer is supported, false otherwise. This is experimental technology.
      */
     get supportsReadBuffer(): boolean {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return (this._context as any).readBuffer !== undefined;
     }
 
@@ -869,14 +944,17 @@ export class Context {
      * True if WebGL2 texImage3D draft is supported, false otherwise. This is experimental technology.
      */
     get supportsTexImage3D(): boolean {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return (this._context as any).texImage3D !== undefined;
     }
 
 
     // PARAMETER QUERIES
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     param(pname: GLenum): any {
         assert(!!this._context, `expected context to be valid`);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this._context!.getParameter(pname);
     }
 
@@ -884,7 +962,7 @@ export class Context {
      * Provides the context's extension hash. The hash can be used for context masquerade.
      */
     hash(): string {
-        return ExtensionsHash.encode(this._backend as Context.BackendType, this._extensions);
+        return ExtensionsHash.encode(this._backend as BackendType, this._extensions);
     }
 
     /**
@@ -897,16 +975,17 @@ export class Context {
         const available = 'ok';
         const unavailable = 'na';
 
-        if (this._backend === Context.BackendType.Invalid) {
+        if (this._backend === BackendType.Invalid) {
             return new Array<[string, number | string]>();
         }
 
         assert(!!this._context, `expected context to be valid`);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const context = this._context!;
 
         const pNamesAndValues = new Array<[string, number | string]>();
 
-        pNamesAndValues.push(['BACKEND (GLOPERATE)', this.backend as Context.BackendType]);
+        pNamesAndValues.push(['BACKEND (GLOPERATE)', this.backend as BackendType]);
         pNamesAndValues.push(['CONTEXT_HASH (GLOPERATE)', this.hash()]);
 
         pNamesAndValues.push(['RENDERER', this.param(context.RENDERER)]);
@@ -1117,29 +1196,25 @@ export class Context {
 
 }
 
-export namespace Context {
+/**
+ * Supported OpenGL backend types.
+ */
+export enum BackendType {
+    Invalid = 'invalid',
+    WebGL1 = 'webgl1',
+    WebGL2 = 'webgl2',
+}
 
-    /**
-     * Supported OpenGL backend types.
-     */
-    export enum BackendType {
-        Invalid = 'invalid',
-        WebGL1 = 'webgl1',
-        WebGL2 = 'webgl2',
-    }
-
-    /**
-     * The list of valid backend identifiers that can be requested and matched to backend types.
-     * List adopted from https://developer.mozilla.org/de/docs/Web/API/HTMLCanvasElement/getContext.
-     */
-    export enum BackendRequestType {
-        auto = 'auto',
-        webgl = 'webgl',
-        experimental = 'experimental-webgl',
-        webgl1 = 'webgl1',
-        experimental1 = 'experimental-webgl1',
-        webgl2 = 'webgl2',
-        experimental2 = 'experimental-webgl2',
-    }
-
+/**
+ * The list of valid backend identifiers that can be requested and matched to backend types.
+ * List adopted from https://developer.mozilla.org/de/docs/Web/API/HTMLCanvasElement/getContext.
+ */
+export enum BackendRequestType {
+    auto = 'auto',
+    webgl = 'webgl',
+    experimental = 'experimental-webgl',
+    webgl1 = 'webgl1',
+    experimental1 = 'experimental-webgl1',
+    webgl2 = 'webgl2',
+    experimental2 = 'experimental-webgl2',
 }

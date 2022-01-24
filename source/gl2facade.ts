@@ -3,7 +3,7 @@
 
 import { assert, logIf, LogLevel } from 'haeley-auxiliaries';
 
-import { Context } from './context';
+import { BackendType, Context } from './context';
 
 /* spellchecker: enable */
 
@@ -56,12 +56,12 @@ export class GL2Facade {
      */
     protected queryHalfFloatSupport(context: Context): void {
         switch (context.backend) {
-            case Context.BackendType.WebGL1:
+            case BackendType.WebGL1:
                 this._halfFloat = context.supportsTextureHalfFloat && context.textureHalfFloat ?
                     context.textureHalfFloat.HALF_FLOAT_OES : undefined;
                 break;
 
-            case Context.BackendType.WebGL2:
+            case BackendType.WebGL2:
             /* falls through */
             default:
                 this._halfFloat = context.gl.HALF_FLOAT;
@@ -164,7 +164,7 @@ export class GL2Facade {
          * This maps the various default color attachment identifier to a unified interface.
          */
         switch (context.backend) {
-            case Context.BackendType.WebGL1:
+            case BackendType.WebGL1: {
                 const drawBuffers = context.supportsDrawBuffers ? context.drawBuffers : undefined;
 
                 this._colorAttachmentMin = this._colorAttachments[0];
@@ -180,8 +180,8 @@ export class GL2Facade {
                     this._colorAttachments[i] = drawBuffers.COLOR_ATTACHMENT0_WEBGL + i;
                 }
                 break;
-
-            case Context.BackendType.WebGL2:
+            }
+            case BackendType.WebGL2:
             /* falls through */
             default:
                 this._colorAttachmentMin = context.gl.COLOR_ATTACHMENT0;
@@ -285,21 +285,25 @@ export class GL2Facade {
     /**
      * @link https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/createVertexArray
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     createVertexArray: () => any /* WebGLVertexArrayObject */;
 
     /**
      * @link https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/createVertexArray
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     deleteVertexArray: (arrayObject: any /* WebGLVertexArrayObject */) => void;
 
     /**
      * @link https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/isVertexArray
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     isVertexArray: (arrayObject: any /* WebGLVertexArrayObject */) => GLboolean;
 
     /**
      * @link https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/bindVertexArray
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     bindVertexArray: (arrayObject: any /* WebGLVertexArrayObject */) => void;
 
     protected queryVertexArrayObjectSupport(context: Context): void {
@@ -312,15 +316,21 @@ export class GL2Facade {
             () => context.vertexArrayObject.createVertexArrayOES();
 
         this.deleteVertexArray = context.isWebGL2 ?
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (arrayObject: any) => context.gl.deleteVertexArray(arrayObject) :
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (arrayObject: any) => context.vertexArrayObject.deleteVertexArrayOES(arrayObject);
 
         this.isVertexArray = context.isWebGL2 ?
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (arrayObject: any) => context.gl.isVertexArray(arrayObject) :
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (arrayObject: any) => context.vertexArrayObject.isVertexArrayOES(arrayObject);
 
         this.bindVertexArray = context.isWebGL2 ?
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (arrayObject: any) => context.gl.bindVertexArray(arrayObject) :
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (arrayObject: any) => context.vertexArrayObject.bindVertexArrayOES(arrayObject);
     }
 

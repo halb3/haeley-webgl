@@ -3,7 +3,7 @@
 
 import { assert } from 'haeley-auxiliaries';
 
-import { Context } from './context';
+import { BackendType } from './context';
 import { WEBGL1_EXTENSIONS, WEBGL2_EXTENSIONS } from './extensions';
 
 /* spellchecker: enable */
@@ -91,7 +91,7 @@ export class ExtensionsHash {
      * @param backend - WebGL backend: 'webgl1' or 'webgl2'.
      * @param supported - Array of supported extensions to be encoded.
      */
-    static encode(backend: Context.BackendType, supported: Array<string>): string {
+    static encode(backend: BackendType, supported: Array<string>): string {
         const version = ExtensionsHash.LATEST_VERSION; // should always be set to the latest version
         const extensions = ExtensionsHash.EXTENSIONS_BY_VERSION.get(version) as Array<string>;
 

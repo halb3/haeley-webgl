@@ -27,7 +27,7 @@ import masqueradeJson from './data/masquerade.json';
 export class ContextMasquerade {
 
     /** @see {@link presets} */
-    protected static readonly MASQUERADE_JSON: Array<ContextMasquerade.Preset> = masqueradeJson;
+    protected static readonly MASQUERADE_JSON: Array<Preset> = masqueradeJson;
 
     /** @see {@link backend} */
     protected _backend: string;
@@ -66,7 +66,7 @@ export class ContextMasquerade {
         const mask = new ContextMasquerade();
 
         const identifiers = new Array<string>();
-        let preset: ContextMasquerade.Preset | undefined;
+        let preset: Preset | undefined;
         for (const p of ContextMasquerade.presets()) {
             identifiers.push(p.identifier);
             if (p.identifier !== identifier) {
@@ -80,13 +80,14 @@ export class ContextMasquerade {
             assert(false,
                 `expected valid identifier, available ['${identifiers.join('\', \'')}'], given '${identifier}'`);
         }
-        preset = preset as ContextMasquerade.Preset;
+        preset = preset as Preset;
 
         if (preset.extensions_hash !== undefined) {
             const tuple = ExtensionsHash.decode(preset.extensions_hash);
             mask._backend = tuple[0];
             mask._extensionsStrive = tuple[1];
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             mask._backend = preset.backend!;
         }
 
@@ -127,7 +128,7 @@ export class ContextMasquerade {
      * Presets for emulation of various browsers. This can be used to maintain multiple test configurations and
      * simplify cross-browser testing without actually using different browsers.
      */
-    static presets(): Array<ContextMasquerade.Preset> {
+    static presets(): Array<Preset> {
         return this.MASQUERADE_JSON;
     }
 
@@ -163,19 +164,14 @@ export class ContextMasquerade {
     }
 }
 
-
-export namespace ContextMasquerade {
-
-    /**
-     * Interfaces required to prevent implicit any when parsing masquerade.json.
-     */
-    export interface Preset {
-        identifier: string;
-        backend?: string;
-        extensions_hash?: string;
-        extensions_strive?: Array<string>;
-        extensions_conceal?: Array<string>;
-        functions_undefine?: Array<string>;
-    }
-
+/**
+ * Interfaces required to prevent implicit any when parsing masquerade.json.
+ */
+export interface Preset {
+    identifier: string;
+    backend?: string;
+    extensions_hash?: string;
+    extensions_strive?: Array<string>;
+    extensions_conceal?: Array<string>;
+    functions_undefine?: Array<string>;
 }

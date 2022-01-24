@@ -110,6 +110,7 @@ export class AllocationRegister {
             return;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const bytes = (this._bytesByIdentifier.get(identifier)!) + allocate;
         this._bytesByIdentifier.set(identifier, bytes);
 
@@ -125,6 +126,7 @@ export class AllocationRegister {
     deallocate(identifier: string, deallocate: number): void {
         this.assertIdentifier(identifier);
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const bytes = this._bytesByIdentifier.get(identifier)!;
         assert(deallocate >= 0, `positive number of bytes expected for deallocation, given ${deallocate}`);
         assert(deallocate <= bytes, `deallocation cannot exceed previous allocations of ${bytes}, given ${deallocate}`);
@@ -149,6 +151,7 @@ export class AllocationRegister {
         this.assertIdentifier(identifier);
         assert(reallocate >= 0, `positive number of bytes expected for reallocation, given ${reallocate}`);
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const previousBytes = this._bytesByIdentifier.get(identifier)!;
 
         /* Nothing to do if same size should be reallocated */
@@ -174,6 +177,7 @@ export class AllocationRegister {
             return this._bytes;
         }
         this.assertIdentifier(identifier);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this._bytesByIdentifier.get(identifier)!;
     }
 

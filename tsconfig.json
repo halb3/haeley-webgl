@@ -32,7 +32,7 @@
         "source/index.ts"
     ],
     "include": [
-        "source/**/*.ts",
+        "source/**/*.ts"
     ],
     "exclude": [
         "node_modules",

@@ -19,6 +19,6 @@ export { Renderbuffer } from './renderbuffer';
 export { Shader } from './shader';
 export { Texture2D } from './texture2d';
 export { VertexArray } from './vertexarray';
-export { Wizard } from './wizard';
+export { Wizard, Precision } from './wizard';
 
 /* spellchecker: enable */
